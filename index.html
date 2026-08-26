@@ -920,13 +920,40 @@
   .dd-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: .05em; color: var(--white); }
   .dd-sub { font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--muted); }
   .dd-blurb { font-size: .92rem; color: var(--text); margin: .3rem 0 1rem; }
-  .dd-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px,1fr)); gap: .85rem; }
+  .dd-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(430px,1fr)); gap: .85rem; }
   .dd-card {
     display: block; text-decoration: none;
     background: rgba(20,28,46,.5); border: 1px solid var(--border);
     border-radius: 8px; padding: .8rem .95rem; transition: .2s;
   }
   .dd-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .dd-thumb {
+    position: relative; display: block; overflow: hidden;
+    float: right; width: 208px; height: 132px; margin: .1rem 0 .5rem .9rem;
+    background: #0a0e1a; border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .dd-card::after { content: ''; display: block; clear: both; }
+  .dd-thumb img {
+    position: absolute; top: 3px; left: 3px;
+    width: calc(100% - 6px); height: calc(100% - 6px);
+    object-fit: contain; display: block;
+    opacity: 0; transition: opacity .55s ease, filter .3s ease;
+  }
+  .dd-thumb img.on { opacity: 1; }
+  .dd-card:hover .dd-thumb img.on { filter: brightness(1.12); }
+  .dd-dots {
+    position: absolute; right: 5px; bottom: 5px;
+    display: flex; gap: 3px; z-index: 2;
+  }
+  .dd-dots i {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--muted); opacity: .55; transition: .3s;
+  }
+  .dd-dots i.on { background: var(--gold2); opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .dd-thumb img { transition: none; }
+  }
   .dd-co { font-family: 'DM Mono', monospace; font-size: .82rem; color: var(--gold2); margin-bottom: .15rem; }
   .dd-role { font-size: .74rem; color: var(--muted); margin-bottom: .4rem; }
   .dd-txt { font-size: .85rem; color: var(--text); line-height: 1.55; }
@@ -985,12 +1012,44 @@
 <script>
 (function () {
   var CO = {
-    wyss:   { n: 'Wyss Center - Ability Neurotech', href: '#wyss-exp',   role: 'Sr. Mechanical Engineer',         period: '2023 to present' },
-    cytiva: { n: 'Cytiva',                          href: '#cytiva-exp', role: 'Sr. V&amp;V Manager',             period: '2022 to 2023' },
-    hach:   { n: 'Hach Lange',                      href: '#hach-exp',   role: 'Sr. R&amp;D / V&amp;V Engineer',  period: '2017 to 2022' },
-    crane:  { n: 'Crane Payment Innovation',        href: '#crane-exp',  role: 'Sr. Mechanical Engineer',         period: '2007 to 2017' },
-    debio:  { n: 'Debiotech',                       href: '#debio-exp',  role: 'R&amp;D Engineer',                period: '2003 to 2007' },
-    epfl:   { n: 'EPFL / Sensile Systems',          href: '#epfl-exp',   role: 'R&amp;D Engineer',                period: '1998 to 2003' }
+    wyss:   { n: 'Wyss Center - Ability Neurotech', href: '#wyss-exp',   role: 'Sr. Mechanical Engineer',         period: '2023 to present',
+      imgs: [
+        { s: 'img-04.webp', c: 'Class III active implant' },
+        { s: 'img-08.jpg',  c: 'Ability implant' },
+        { s: 'img-05.jpg',  c: 'BCI wire-bond connection' },
+        { s: 'img-06.jpg',  c: 'HeadPiece to implant optical link' },
+        { s: 'img-07.jpg',  c: 'SolidWorks HeadPiece CAD model' },
+        { s: 'img-25.png',  c: 'Skin compression topography (3D)' }
+      ] },
+    cytiva: { n: 'Cytiva',                          href: '#cytiva-exp', role: 'Sr. V&amp;V Manager',             period: '2022 to 2023',
+      imgs: [
+        { s: 'img-11.png', c: 'Single-use kit, cell and gene therapy' },
+        { s: 'img-12.jpg', c: 'CAR T-cell therapy kits' }
+      ] },
+    hach:   { n: 'Hach Lange',                      href: '#hach-exp',   role: 'Sr. R&amp;D / V&amp;V Engineer',  period: '2017 to 2022',
+      imgs: [
+        { s: 'img-14.jpg', c: 'Dissolved-oxygen sensor' },
+        { s: 'img-13.jpg', c: 'Accelerated aging test bench' },
+        { s: 'img-15.jpg', c: 'High-precision thermistor, long-term verification' },
+        { s: 'img-16.jpg', c: 'Large-sampling accelerated aging test' },
+        { s: 'img-17.jpg', c: 'Meta-analysis of Ag dendrites on thermistors' }
+      ] },
+    crane:  { n: 'Crane Payment Innovation',        href: '#crane-exp',  role: 'Sr. Mechanical Engineer',         period: '2007 to 2017',
+      imgs: [
+        { s: 'img-18.jpg', c: 'Banknote recycler' },
+        { s: 'img-19.jpg', c: 'Internal bill recycling mechanism' },
+        { s: 'img-20.jpg', c: 'Internal bill dispatching assembly' }
+      ] },
+    debio:  { n: 'Debiotech',                       href: '#debio-exp',  role: 'R&amp;D Engineer',                period: '2003 to 2007',
+      imgs: [
+        { s: 'img-21.jpg', c: 'MEMS insulin pump integration' },
+        { s: 'img-22.jpg', c: 'Microfluidic pump' },
+        { s: 'img-23.jpg', c: 'Insulin MEMS pump' }
+      ] },
+    epfl:   { n: 'EPFL / Sensile Systems',          href: '#epfl-exp',   role: 'R&amp;D Engineer',                period: '1998 to 2003',
+      imgs: [
+        { s: 'img-24.jpg', c: 'Miniature motorized camera' }
+      ] }
   };
 
   var SEC = [
@@ -998,22 +1057,22 @@
       hl: ['Banknote recognition systems', 'Production lines transferred to Shanghai', 'Dissolved-oxygen probes at ppb trace level', 'Sensor yield raised from 60% to 97% per year'],
       blurb: 'High-volume electromechanical products: banknote and payment systems, and precision sensors for water analysis.',
       cos: [
-        { id: 'crane', txt: 'Banknote recognition systems; injection-molded, machined and stamped parts; FMEA and V&amp;V; transfer of production lines to Shanghai.' },
-        { id: 'hach',  txt: 'Precision dissolved-oxygen probes; reliability programs that lifted sensor yield from 60% to 97% per year.' }
+        { id: 'crane', txt: 'Banknote recognition systems; injection-molded, machined and stamped parts; FMEA and V&amp;V; transfer of production lines to Shanghai.', img: 'img-18.jpg', cap: 'Banknote recycler' },
+        { id: 'hach',  txt: 'Precision dissolved-oxygen probes; reliability programs that lifted sensor yield from 60% to 97% per year.', img: 'img-14.jpg', cap: 'Dissolved-oxygen sensor' }
       ] },
     { key: 'medical', label: 'Medical', color: '#4cae9c', value: 105,
       hl: ['Class III implantable neuro device', 'Implantable insulin pump (MEMS)', 'Cell and gene therapy kit V&amp;V', 'Medical liquid injection patent'],
       blurb: 'Regulated medical devices: Class III implantable neurotech (Ability Neurotech), implantable microfluidic drug delivery, and cell and gene therapy single-use kits.',
       cos: [
-        { id: 'wyss',   txt: 'Class III implantable and wearable neuro devices; concept to V&amp;V; miniaturized biocompatible hardware.' },
-        { id: 'debio',  txt: 'Microfluidic systems and an implantable insulin pump (MEMS); medical liquid injection patent.' },
-        { id: 'cytiva', txt: 'V&amp;V management of single-use kits for cell and gene therapy; built V&amp;V good practices.' }
+        { id: 'wyss',   txt: 'Class III implantable and wearable neuro devices; concept to V&amp;V; miniaturized biocompatible hardware.', img: 'img-04.webp', cap: 'Class III active implant' },
+        { id: 'debio',  txt: 'Microfluidic systems and an implantable insulin pump (MEMS); medical liquid injection patent.', img: 'img-21.jpg', cap: 'MEMS insulin pump integration' },
+        { id: 'cytiva', txt: 'V&amp;V management of single-use kits for cell and gene therapy; built V&amp;V good practices.', img: 'img-11.png', cap: 'Single-use kit, cell and gene therapy' }
       ] },
     { key: 'startup', label: 'Startup', color: '#e8c97a', value: 62,
       hl: ['Miniature motorized surveillance camera', 'EPFL-to-Sensile technology transfer', 'DC micro gear-motor with Maxon Motors'],
       blurb: 'Early-stage venture and spin-off engineering: an embedded-vision motorized camera spun off from an EPFL lab into Sensile Systems.',
       cos: [
-        { id: 'epfl', txt: 'Miniature motorized camera; technology transfer from the EPFL lab to the Sensile spin-off.' }
+        { id: 'epfl', txt: 'Miniature motorized camera; technology transfer from the EPFL lab to the Sensile spin-off.', img: 'img-24.jpg', cap: 'Miniature motorized camera' }
       ] }
   ];
 
@@ -1021,34 +1080,34 @@
     { key: 'design', label: 'Design', sub: 'Conception', color: '#e8c97a', value: 131.9,
       hl: ['SolidWorks (20 years)', 'Ansys FEA &amp; CFD simulation', 'Design for Assembly (DFA)', 'Injection molding, machining, stamping', 'MEMS glass/silicon micro-channels', 'Concept &amp; design input requirements'],
       cos: [
-        { id: 'epfl',  txt: 'Mechanical, electronic and software design of a miniature motorized camera; DC micro gear-motor; glucose measurement system.' },
-        { id: 'debio', txt: 'Microfluidic systems; micromechanical elements of an implantable insulin pump (MEMS); peristaltic-pump drive.' },
-        { id: 'crane', txt: 'Banknote recognition systems; modeling of molded, machined, stamped and laser-cut parts; Design for Assembly (DFA) for high-volume assembly; 3 patents.' },
-        { id: 'wyss',  txt: 'Mechanical design of implantable and wearable devices; miniaturized biocompatible hardware; Design for Assembly (DFA) for reliable micro-assembly.' }
+        { id: 'epfl',  txt: 'Mechanical, electronic and software design of a miniature motorized camera; DC micro gear-motor; glucose measurement system.', img: 'img-24.jpg', cap: 'Miniature motorized camera' },
+        { id: 'debio', txt: 'Microfluidic systems; micromechanical elements of an implantable insulin pump (MEMS); peristaltic-pump drive.', img: 'img-22.jpg', cap: 'Microfluidic pump' },
+        { id: 'crane', txt: 'Banknote recognition systems; modeling of molded, machined, stamped and laser-cut parts; Design for Assembly (DFA) for high-volume assembly; 3 patents.', img: 'img-19.jpg', cap: 'Internal bill recycling mechanism' },
+        { id: 'wyss',  txt: 'Mechanical design of implantable and wearable devices; miniaturized biocompatible hardware; Design for Assembly (DFA) for reliable micro-assembly.', img: 'img-07.jpg', cap: 'SolidWorks HeadPiece CAD model' }
       ] },
     { key: 'indus', label: 'Industrialization', sub: '', color: '#4f86c6', value: 82.75,
       hl: ['Production lines transferred to Shanghai', 'Camera technology transfer to Sensile', 'Sensor yield 60% to 97% per year', 'Assembly processes defined with partners', 'Design for Assembly (DFA)'],
       cos: [
-        { id: 'crane', txt: 'Created and transferred production lines to Shanghai; industrialized high-volume mechanical assemblies.' },
-        { id: 'epfl',  txt: 'Technology transfer of the mobile camera from EPFL to Sensile Systems.' },
-        { id: 'debio', txt: 'Defined assembly processes with industrial and academic partners; micro-fabrication across many processes.' },
-        { id: 'hach',  txt: 'Raised oxygen-sensor yield from 60% to 97% per year, protecting over $2M per year of revenue at risk; Design for Assembly (DFA) of sensor and probe architecture.' }
+        { id: 'crane', txt: 'Created and transferred production lines to Shanghai; industrialized high-volume mechanical assemblies.', img: 'img-20.jpg', cap: 'Internal bill dispatching assembly' },
+        { id: 'epfl',  txt: 'Technology transfer of the mobile camera from EPFL to Sensile Systems.', img: 'img-24.jpg', cap: 'Miniature motorized camera' },
+        { id: 'debio', txt: 'Defined assembly processes with industrial and academic partners; micro-fabrication across many processes.', img: 'img-23.jpg', cap: 'Insulin MEMS pump' },
+        { id: 'hach',  txt: 'Raised oxygen-sensor yield from 60% to 97% per year, protecting over $2M per year of revenue at risk; Design for Assembly (DFA) of sensor and probe architecture.', img: 'img-14.jpg', cap: 'Dissolved-oxygen sensor' }
       ] },
     { key: 'vv', label: 'V&amp;V', sub: 'Verification and Validation', color: '#4cae9c', value: 67.3,
       hl: ['Reliability, aging and robustness test rigs', 'FMEA, functional and lifecycle tests', 'Cell and gene therapy kit V&amp;V', 'Class III design inputs, outputs and V&amp;V'],
       cos: [
-        { id: 'crane',  txt: 'Risk analysis (FMEA), functional tests and V&amp;V of device performance: aging, wear and lifecycle.' },
-        { id: 'hach',   txt: 'Reliability tests and equipment for aging, robustness and performance qualification.' },
-        { id: 'cytiva', txt: 'V&amp;V Manager for single-use kits; built good practices for disposable-kit V&amp;V.' },
-        { id: 'wyss',   txt: 'Risk analysis and V&amp;V across all phases of Class III device development.' }
+        { id: 'crane',  txt: 'Risk analysis (FMEA), functional tests and V&amp;V of device performance: aging, wear and lifecycle.', img: 'img-19.jpg', cap: 'Internal bill recycling mechanism' },
+        { id: 'hach',   txt: 'Reliability tests and equipment for aging, robustness and performance qualification.', img: 'img-13.jpg', cap: 'Accelerated aging test bench' },
+        { id: 'cytiva', txt: 'V&amp;V Manager for single-use kits; built good practices for disposable-kit V&amp;V.', img: 'img-12.jpg', cap: 'CAR T-cell therapy kits' },
+        { id: 'wyss',   txt: 'Risk analysis and V&amp;V across all phases of Class III device development.', img: 'img-05.jpg', cap: 'BCI wire-bond connection' }
       ] },
     { key: 'pm', label: 'Project Management', sub: '', color: '#d08aa0', value: 59.05,
       hl: ['Two 2.5-year R&amp;D programs, 40 people', 'International cross-functional leadership', 'Concept-to-V&amp;V implant program ownership', 'R&amp;D disposable team standardization'],
       cos: [
-        { id: 'crane',  txt: 'Project management and team leadership in an international environment.' },
-        { id: 'hach',   txt: 'Led cross-functional projects; managed two 2.5-year R&amp;D programs involving 40 people.' },
-        { id: 'wyss',   txt: 'Owns the concept-to-V&amp;V workflow of the implant program.' },
-        { id: 'cytiva', txt: 'Standardized and harmonized the R&amp;D disposable team methods.' }
+        { id: 'crane',  txt: 'Project management and team leadership in an international environment.', img: 'img-18.jpg', cap: 'Banknote recycler' },
+        { id: 'hach',   txt: 'Led cross-functional projects; managed two 2.5-year R&amp;D programs involving 40 people.', img: 'img-16.jpg', cap: 'Large-sampling accelerated aging test' },
+        { id: 'wyss',   txt: 'Owns the concept-to-V&amp;V workflow of the implant program.', img: 'img-06.jpg', cap: 'HeadPiece to implant optical link' },
+        { id: 'cytiva', txt: 'Standardized and harmonized the R&amp;D disposable team methods.', img: 'img-11.png', cap: 'Single-use kit, cell and gene therapy' }
       ] }
   ];
 
@@ -1082,11 +1141,60 @@
   }
   function hideTip() { tip.classList.remove('show'); }
 
+  // Images d'une carte : celle choisie pour cette tranche en tete, puis le reste du fonds
+  function shotsFor(c, o) {
+    var out = [], seen = {};
+    if (c.img) { out.push({ s: c.img, c: c.cap || o.n }); seen[c.img] = 1; }
+    (o.imgs || []).forEach(function (im) { if (!seen[im.s]) { out.push(im); seen[im.s] = 1; } });
+    return out;
+  }
+
+  // Defilement des images, une bascule toutes les 3 s, synchronisee sur toutes les cartes
+  var rotTimer = null;
+  function startRotation() {
+    if (rotTimer) { clearInterval(rotTimer); rotTimer = null; }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var hosts = [].slice.call(document.querySelectorAll('#donut-detail .dd-thumb'))
+                  .filter(function (h) { return h.querySelectorAll('img').length > 1; });
+    if (!hosts.length) return;
+    rotTimer = setInterval(function () {
+      hosts.forEach(function (h) {
+        var imgs = [].slice.call(h.querySelectorAll('img')).filter(function (i) { return !i.dataset.bad; });
+        if (imgs.length < 2) return;
+        var cur = 0;
+        imgs.forEach(function (i, k) { if (i.classList.contains('on')) cur = k; });
+        var nxt = (cur + 1) % imgs.length;
+        imgs[cur].classList.remove('on');
+        imgs[nxt].classList.add('on');
+        h.setAttribute('title', imgs[nxt].getAttribute('data-cap') || '');
+        var dots = h.querySelectorAll('.dd-dots i');
+        if (dots.length === imgs.length) {
+          dots.forEach(function (d, k) { d.classList.toggle('on', k === nxt); });
+        }
+      });
+    }, 3000);
+  }
+
   function detailHTML(s, total) {
     var pct = Math.round(s.value / total * 100);
     var cards = s.cos.map(function (c) {
       var o = CO[c.id];
-      return '<a class="dd-card" href="' + o.href + '">' +
+      var shots = shotsFor(c, o);
+      var thumb = '';
+      if (shots.length) {
+        var pile = shots.map(function (im, i) {
+          return '<img src="' + im.s + '" alt="' + im.c + '" data-cap="' + im.c + '" loading="lazy"' +
+                 (i === 0 ? ' class="on"' : '') +
+                 ' onerror="this.dataset.bad=1;this.classList.remove(&quot;on&quot;)">';
+        }).join('');
+        var dots = shots.length > 1
+          ? '<span class="dd-dots">' + shots.map(function (im, i) {
+              return '<i' + (i === 0 ? ' class="on"' : '') + '></i>';
+            }).join('') + '</span>'
+          : '';
+        thumb = '<span class="dd-thumb" title="' + shots[0].c + '">' + pile + dots + '</span>';
+      }
+      return '<a class="dd-card" href="' + o.href + '">' + thumb +
                '<div class="dd-co">' + o.n + '</div>' +
                '<div class="dd-role">' + o.role + ' / ' + o.period + '</div>' +
                '<div class="dd-txt">' + c.txt + '</div>' +
@@ -1112,6 +1220,7 @@
     var det = document.getElementById('donut-detail');
     det.innerHTML = detailHTML(s, total);
     det.style.borderLeftColor = s.color;
+    startRotation();
   }
 
   function buildDonut(hostId, legId, segs, total, mode, csmall) {
