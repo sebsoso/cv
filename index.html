@@ -942,15 +942,20 @@
   }
   .dd-thumb img.on { opacity: 1; }
   .dd-card:hover .dd-thumb img.on { filter: brightness(1.12); }
+  .dd-thumb.multi { cursor: pointer; }
+  .dd-thumb.multi:hover { border-color: var(--gold); }
   .dd-dots {
-    position: absolute; right: 5px; bottom: 5px;
-    display: flex; gap: 3px; z-index: 2;
+    position: absolute; right: 4px; bottom: 4px;
+    display: flex; gap: 2px; z-index: 2;
   }
   .dd-dots i {
-    width: 4px; height: 4px; border-radius: 50%;
+    box-sizing: content-box;          /* la bordure transparente elargit la zone cliquable */
+    width: 5px; height: 5px; border-radius: 50%;
     background: var(--muted); opacity: .55; transition: .3s;
+    border: 3px solid transparent; background-clip: content-box;
   }
-  .dd-dots i.on { background: var(--gold2); opacity: 1; }
+  .dd-thumb.multi:hover .dd-dots i { opacity: .85; }
+  .dd-dots i.on, .dd-thumb.multi:hover .dd-dots i.on { background: var(--gold2); opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
     .dd-thumb img { transition: none; }
   }
@@ -1149,31 +1154,41 @@
     return out;
   }
 
-  // Defilement des images, une bascule toutes les 3 s, synchronisee sur toutes les cartes
-  var rotTimer = null;
-  function startRotation() {
-    if (rotTimer) { clearInterval(rotTimer); rotTimer = null; }
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var hosts = [].slice.call(document.querySelectorAll('#donut-detail .dd-thumb'))
-                  .filter(function (h) { return h.querySelectorAll('img').length > 1; });
-    if (!hosts.length) return;
-    rotTimer = setInterval(function () {
-      hosts.forEach(function (h) {
-        var imgs = [].slice.call(h.querySelectorAll('img')).filter(function (i) { return !i.dataset.bad; });
-        if (imgs.length < 2) return;
-        var cur = 0;
-        imgs.forEach(function (i, k) { if (i.classList.contains('on')) cur = k; });
-        var nxt = (cur + 1) % imgs.length;
-        imgs[cur].classList.remove('on');
-        imgs[nxt].classList.add('on');
-        h.setAttribute('title', imgs[nxt].getAttribute('data-cap') || '');
-        var dots = h.querySelectorAll('.dd-dots i');
-        if (dots.length === imgs.length) {
-          dots.forEach(function (d, k) { d.classList.toggle('on', k === nxt); });
-        }
-      });
-    }, 3000);
+  // Changement d'image au clic sur la vignette ; une pastille mene directement a son image
+  function showShot(h, idx) {
+    var imgs = [].slice.call(h.querySelectorAll('img')).filter(function (i) { return !i.dataset.bad; });
+    if (imgs.length < 2) return;
+    var nxt = ((idx % imgs.length) + imgs.length) % imgs.length;
+    imgs.forEach(function (i, k) { i.classList.toggle('on', k === nxt); });
+    var cap = imgs[nxt].getAttribute('data-cap') || '';
+    h.setAttribute('title', cap + ' (' + (nxt + 1) + '/' + imgs.length + ', click for next)');
+    var dots = h.querySelectorAll('.dd-dots i');
+    if (dots.length === imgs.length) {
+      dots.forEach(function (d, k) { d.classList.toggle('on', k === nxt); });
+    }
   }
+
+  function currentShot(h) {
+    var imgs = [].slice.call(h.querySelectorAll('img')).filter(function (i) { return !i.dataset.bad; });
+    var cur = 0;
+    imgs.forEach(function (i, k) { if (i.classList.contains('on')) cur = k; });
+    return cur;
+  }
+
+  // Un seul ecouteur, pose sur le panneau qui survit aux re-rendus de son contenu
+  document.getElementById('donut-detail').addEventListener('click', function (ev) {
+    var h = ev.target.closest ? ev.target.closest('.dd-thumb') : null;
+    if (!h || h.querySelectorAll('img').length < 2) return;
+    ev.preventDefault();   // sans quoi le clic suivrait le lien vers la timeline
+    ev.stopPropagation();
+    var dot = ev.target.closest('.dd-dots i');
+    if (dot) {
+      var dots = [].slice.call(h.querySelectorAll('.dd-dots i'));
+      showShot(h, dots.indexOf(dot));
+    } else {
+      showShot(h, currentShot(h) + 1);
+    }
+  });
 
   function detailHTML(s, total) {
     var pct = Math.round(s.value / total * 100);
@@ -1192,7 +1207,9 @@
               return '<i' + (i === 0 ? ' class="on"' : '') + '></i>';
             }).join('') + '</span>'
           : '';
-        thumb = '<span class="dd-thumb" title="' + shots[0].c + '">' + pile + dots + '</span>';
+        var multi = shots.length > 1;
+        var tt = shots[0].c + (multi ? ' (1/' + shots.length + ', click for next)' : '');
+        thumb = '<span class="dd-thumb' + (multi ? ' multi' : '') + '" title="' + tt + '">' + pile + dots + '</span>';
       }
       return '<a class="dd-card" href="' + o.href + '">' + thumb +
                '<div class="dd-co">' + o.n + '</div>' +
@@ -1220,7 +1237,6 @@
     var det = document.getElementById('donut-detail');
     det.innerHTML = detailHTML(s, total);
     det.style.borderLeftColor = s.color;
-    startRotation();
   }
 
   function buildDonut(hostId, legId, segs, total, mode, csmall) {
